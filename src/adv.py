@@ -1,8 +1,8 @@
 from room import Room
-
+from player import Player
 # Declare all the rooms
 
-room = {
+rooms = {
     'outside':  Room("Outside Cave Entrance",
                      "North of you, the cave mount beckons"),
 
@@ -24,21 +24,21 @@ earlier adventurers. The only exit is to the south."""),
 
 # Link rooms together
 
-room['outside'].n_to = room['foyer']
-room['foyer'].s_to = room['outside']
-room['foyer'].n_to = room['overlook']
-room['foyer'].e_to = room['narrow']
-room['overlook'].s_to = room['foyer']
-room['narrow'].w_to = room['foyer']
-room['narrow'].n_to = room['treasure']
-room['treasure'].s_to = room['narrow']
+rooms['outside'].w_to = rooms['foyer']
+rooms['foyer'].s_to = rooms['outside']
+rooms['foyer'].w_to = rooms['overlook']
+rooms['foyer'].d_to = rooms['narrow']
+rooms['overlook'].s_to = rooms['foyer']
+rooms['narrow'].a_to = rooms['foyer']
+rooms['narrow'].w_to = rooms['treasure']
+rooms['treasure'].s_to = rooms['narrow']
 
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
-
+player = Player(rooms['outside'])
 # Write a loop that:
 #
 # * Prints the current room name
@@ -49,3 +49,23 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+choices = ['w', 'a', 's', 'd']
+
+while True:
+    print(f'Your current location is: {player.location.name} .')
+    # User will pick a direction
+    cmd = input("-> ")
+
+    if cmd in choices:
+        if hasattr(player.location, f'{cmd}_to'):
+            new_room = getattr(player.location, f'{cmd}_to')
+            player.move(new_room)
+
+        else:
+            print('That directions appears to be a dead end, try another direction...')
+    elif cmd == "q":
+        print('Bye!')
+        break
+    else:
+        print('Invalid Command')
